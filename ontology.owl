@@ -1,0 +1,239 @@
+@prefix : <https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl#> .
+@prefix univ: <https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl> 
+    a owl:Ontology ;
+    rdfs:label "University Courses & Students Ontology" ;
+    owl:versionInfo "1.0.0" ;
+    rdfs:comment "Ontology created for the TIES4520 Semi-final Assignment (University Courses & Students domain)." .
+
+###########
+# CLASSES #
+###########
+:Person a owl:Class .
+:Student a owl:Class ; rdfs:subClassOf :Person .
+:UndergraduateStudent a owl:Class ; rdfs:subClassOf :Student .
+:GraduateStudent a owl:Class ; rdfs:subClassOf :Student .
+:Instructor a owl:Class ; rdfs:subClassOf :Person .
+:TeachingAssistant a owl:Class ; rdfs:subClassOf :Person .
+:TeachingStaff a owl:Class ;
+  owl:equivalentClass [ a owl:Class ;
+    owl:unionOf ( :Instructor :TeachingAssistant )
+  ] .
+
+:NonInstructor a owl:Class ;
+  owl:equivalentClass [ a owl:Class ;
+    owl:intersectionOf ( :Person [ a owl:Class ; owl:complementOf :Instructor ] )
+  ] .
+
+:Department a owl:Class .
+:Program a owl:Class .
+:DegreeProgram a owl:Class ; rdfs:subClassOf :Program .
+:MinorProgram a owl:Class ; rdfs:subClassOf :Program .
+
+:Course a owl:Class .
+:LectureCourse a owl:Class ; rdfs:subClassOf :Course .
+:LabCourse a owl:Class ; rdfs:subClassOf :Course .
+:SeminarCourse a owl:Class ; rdfs:subClassOf :Course .
+:LabOrLectureCourse a owl:Class ;
+  owl:equivalentClass [ a owl:Class ;
+    owl:unionOf ( :LabCourse :LectureCourse )
+  ] .
+
+:Assessment a owl:Class .
+:Exam a owl:Class ; rdfs:subClassOf :Assessment .
+:Assignment a owl:Class ; rdfs:subClassOf :Assessment .
+
+:Room a owl:Class .
+:Building a owl:Class .
+
+:Enrollment a owl:Class .
+:Semester a owl:Class .
+
+# Enumeration (oneOf): Grade scale
+:Grade a owl:Class ;
+  owl:oneOf ( :gradeA :gradeB :gradeC :gradeD :gradeE :gradeF :gradePass :gradeFail ) .
+
+# Defined class: Courses offered by departments only
+:DepartmentalCourse a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      :Course
+      [ a owl:Restriction ; owl:onProperty :offeredBy ; owl:allValuesFrom :Department ]
+    )
+  ] .
+
+# Intersection example: EnrolledStudent
+:EnrolledStudent a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      :Student
+      [ a owl:Restriction ; owl:onProperty :enrolledIn ; owl:someValuesFrom :Course ]
+    )
+  ] .
+
+# Cardinality example: Exactly one advisor
+:AdvisedStudent a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      :Student
+      [ a owl:Restriction ; owl:onProperty :hasAdvisor ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Instructor ]
+    )
+  ] .
+
+# Single-room course example
+:SingleRoomCourse a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      :Course
+      [ a owl:Restriction ; owl:onProperty :heldIn ; owl:allValuesFrom :Room ]
+      [ a owl:Restriction ; owl:onProperty :heldIn ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Room ]
+    )
+  ] .
+
+owl:AllDisjointClasses [
+  a owl:AllDisjointClasses ;
+  owl:members ( :LectureCourse :LabCourse :SeminarCourse )
+] .
+
+#######################
+# OBJECT PROPERTIES   #
+#######################
+:enrolledIn a owl:ObjectProperty ;
+  rdfs:domain :Student ;
+  rdfs:range :Course ;
+  rdfs:label "student enrolled in course" .
+
+:teaches a owl:ObjectProperty ;
+  rdfs:domain :Instructor ;
+  rdfs:range :Course .
+
+:offeredBy a owl:ObjectProperty ;
+  rdfs:domain :Course ;
+  rdfs:range :Department .
+
+:hasPrerequisite a owl:ObjectProperty ;
+  rdfs:domain :Course ;
+  rdfs:range :Course ;
+  rdf:type owl:TransitiveProperty .
+
+:hasTA a owl:ObjectProperty ;
+  rdfs:domain :Course ;
+  rdfs:range :TeachingAssistant .
+
+:hasAdvisor a owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:domain :Student ;
+  rdfs:range :Instructor ;
+  rdfs:label "each student has at most one advisor" .
+
+:hasIDCard a owl:ObjectProperty , owl:InverseFunctionalProperty ;
+  rdfs:domain :Person ;
+  rdfs:range :IDCard .
+
+:assessedBy a owl:ObjectProperty ;
+  rdfs:domain :Course ;
+  rdfs:range :Assessment .
+
+:heldIn a owl:ObjectProperty ;
+  rdfs:domain :Course ;
+  rdfs:range :Room .
+
+:hasMember a owl:ObjectProperty ;
+  rdfs:domain :Department ;
+  rdfs:range :Person .
+
+:identifies a owl:ObjectProperty ;
+  owl:inverseOf :hasIDCard ;
+  rdfs:domain :IDCard ;
+  rdfs:range :Person .
+
+#######################
+# DATATYPE PROPERTIES #
+#######################
+:hasName a owl:DatatypeProperty ;
+  rdfs:domain :Person ;
+  rdfs:range xsd:string .
+
+:hasEmail a owl:DatatypeProperty ;
+  rdfs:domain :Person ;
+  rdfs:range xsd:string .
+
+:hasUniversityId a owl:DatatypeProperty ;
+  rdfs:domain :Person ;
+  rdfs:range xsd:string .
+
+:hasCredits a owl:DatatypeProperty ;
+  rdfs:domain :Course ;
+  rdfs:range xsd:int .
+
+:hasECTS a owl:DatatypeProperty ;
+  rdfs:domain :Course ;
+  rdfs:range xsd:int .
+
+:hasStartDate a owl:DatatypeProperty ;
+  rdfs:domain :Course ;
+  rdfs:range xsd:date .
+
+:hasEndDate a owl:DatatypeProperty ;
+  rdfs:domain :Course ;
+  rdfs:range xsd:date .
+
+:hasEnrollmentYear a owl:DatatypeProperty ;
+  rdfs:domain :Student ;
+  rdfs:range xsd:gYear .
+
+:hasGPA a owl:DatatypeProperty ;
+  rdfs:domain :Student ;
+  rdfs:range xsd:decimal .
+
+:hasCapacity a owl:DatatypeProperty ;
+  rdfs:domain :Room ;
+  rdfs:range xsd:int .
+
+#######################
+# OTHER CLASSES/INSTS #
+#######################
+:IDCard a owl:Class .
+
+# Grade individuals (for the :Grade enumeration)
+:gradeA a :Grade .
+:gradeB a :Grade .
+:gradeC a :Grade .
+:gradeD a :Grade .
+:gradeE a :Grade .
+:gradeF a :Grade .
+:gradePass a :Grade .
+:gradeFail a :Grade .
+
+#############
+# LABELS    #
+#############
+:Course rdfs:label "Course" .
+:Student rdfs:label "Student" .
+:Instructor rdfs:label "Instructor" .
+:TeachingAssistant rdfs:label "Teaching Assistant" .
+:Department rdfs:label "Department" .
+:Enrollment rdfs:label "Enrollment" .
+:Assessment rdfs:label "Assessment" .
+:Exam rdfs:label "Exam" .
+:Assignment rdfs:label "Assignment" .
+:Room rdfs:label "Room" .
+:Building rdfs:label "Building" .
+:Program rdfs:label "Program" .
+:DegreeProgram rdfs:label "Degree Program" .
+:MinorProgram rdfs:label "Minor Program" .
+:Semester rdfs:label "Semester" .
+:Grade rdfs:label "Grade (enumeration)" .
+:TeachingStaff rdfs:label "Teaching Staff (Instructor ⊔ TA)" .
+:EnrolledStudent rdfs:label "Enrolled Student (Student ⊓ ∃enrolledIn.Course)" .
+:AdvisedStudent rdfs:label "Advised Student (=1 hasAdvisor.Instructor)" .
+:DepartmentalCourse rdfs:label "Departmental Course (∀ offeredBy.Department)" .
+:SingleRoomCourse rdfs:label "Single-Room Course (∀ heldIn.Room ∧ ≤1 heldIn.Room)" .
