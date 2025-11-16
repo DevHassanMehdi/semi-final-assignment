@@ -1,21 +1,43 @@
 package fi.jyu.ties4520.f8;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URL;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.query.*;
 import org.apache.jena.reasoner.*;
-import org.apache.jena.rulesys.*;
+import org.apache.jena.reasoner.rulesys.*;
 
-@WebServlet("/jena")
 public class JenaReasoningServlet extends HttpServlet {
+
+    // Convert SELECT resultset to an HTML table
+    private String resultSetToHTML(ResultSet results) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table border='1'>");
+
+        // Header row
+        sb.append("<tr>");
+        for (String var : results.getResultVars()) {
+            sb.append("<th>").append(var).append("</th>");
+        }
+        sb.append("</tr>");
+
+        // Data rows
+        while (results.hasNext()) {
+            QuerySolution sol = results.next();
+            sb.append("<tr>");
+            for (String var : results.getResultVars()) {
+                RDFNode node = sol.get(var);
+                sb.append("<td>").append(node == null ? "" : node.toString()).append("</td>");
+            }
+            sb.append("</tr>");
+        }
+
+        sb.append("</table>");
+        return sb.toString();
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -24,59 +46,78 @@ public class JenaReasoningServlet extends HttpServlet {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
 
-        String rdfaUrl  = req.getParameter("rdfaUrl");
-        String rulesTxt = req.getParameter("rules");
-        String sparql   = req.getParameter("query");
+        String rdfaUrl = req.getParameter("rdfaUrl");
+        System.out.println("DEBUG RDFa URL: '" + rdfaUrl + "'");
 
-        out.println("<html><body>");
+        String rulesText = req.getParameter("rules");
+        String sparql = req.getParameter("query");
+
+        out.println("<html><head><title>Task F8 Results</title></head><body>");
 
         try {
-            // enable RDFa parsing
-            Class.forName("net.rootdev.javardfa.RDFaReader");
 
+            // -----------------------------
+            // 1) Load XHTML+RDFa into model
+            // -----------------------------
             Model base = ModelFactory.createDefaultModel();
-            base.read(rdfaUrl, "XHTML");
 
-            Model queryModel = base;
+            try (InputStreamReader reader = new InputStreamReader(
+                    new URL(rdfaUrl).openStream(), "UTF-8")) {
 
-            // Apply rules if provided
-            if (rulesTxt != null && !rulesTxt.trim().isEmpty()) {
-                java.util.List<Rule> rules = Rule.parseRules(rulesTxt);
-                Reasoner reasoner = new GenericRuleReasoner(rules);
-                queryModel = ModelFactory.createInfModel(reasoner, base);
+                base.read(reader, rdfaUrl, "RDFA");
             }
 
+            // -----------------------------
+            // 2) Load Jena rules
+            // -----------------------------
+            java.util.List<Rule> rules = Rule.parseRules(rulesText);
+
+            // -----------------------------
+            // 3) Apply rule-based reasoning
+            // -----------------------------
+            Reasoner reasoner = new GenericRuleReasoner(rules);
+            InfModel infModel = ModelFactory.createInfModel(reasoner, base);
+
+            // -----------------------------
+            // 4) Prepare SPARQL query
+            // -----------------------------
             Query query = QueryFactory.create(sparql);
+            QueryExecution qexec = QueryExecutionFactory.create(query, infModel);
 
-            try (QueryExecution qexec = QueryExecutionFactory.create(query, queryModel)) {
+            out.println("<h2>SPARQL Query Results</h2>");
 
-                if (query.isSelectType()) {
-                    ResultSet results = qexec.execSelect();
-                    out.println("<pre>");
-                    results.forEachRemaining(r -> out.println(r.toString()));
-                    out.println("</pre>");
+            // -----------------------------
+            // 5) Execute the query
+            // -----------------------------
+            if (query.isSelectType()) {
 
-                } else if (query.isAskType()) {
-                    out.println("<p>ASK: " + qexec.execAsk() + "</p>");
+                ResultSet results = qexec.execSelect();
+                out.println(resultSetToHTML(results));
 
-                } else if (query.isConstructType()) {
-                    Model m = qexec.execConstruct();
-                    out.println("<pre>");
-                    m.write(out, "TURTLE");
-                    out.println("</pre>");
+            } else if (query.isAskType()) {
 
-                } else if (query.isDescribeType()) {
-                    Model m = qexec.execDescribe();
-                    out.println("<pre>");
-                    m.write(out, "TURTLE");
-                    out.println("</pre>");
-                }
+                boolean result = qexec.execAsk();
+                out.println("<p><b>ASK Result:</b> " + result + "</p>");
+
+            } else if (query.isConstructType()) {
+
+                Model m = qexec.execConstruct();
+                out.println("<pre>");
+                m.write(out, "TURTLE");
+                out.println("</pre>");
+
+            } else if (query.isDescribeType()) {
+
+                Model m = qexec.execDescribe();
+                out.println("<pre>");
+                m.write(out, "TURTLE");
+                out.println("</pre>");
             }
 
         } catch (Exception e) {
-            out.println("<pre>");
-            e.printStackTrace(out);
-            out.println("</pre>");
+
+            out.println("<p style='color:red'><b>Error:</b> " + e.getMessage() + "</p>");
+            e.printStackTrace();
         }
 
         out.println("</body></html>");
