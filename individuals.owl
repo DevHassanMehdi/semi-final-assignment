@@ -14,16 +14,19 @@
 <!-- Department -->
 <univ:Department rdf:about="#Dept_IT">
     <univ:hasName>Department of Computing</univ:hasName>
+
+    <!-- RULE 2 inferred members -->
+    <univ:hasMember rdf:resource="#Dr_Oleksiy"/>
+    <univ:hasMember rdf:resource="#Dr_Sari_Laaksonen"/>
 </univ:Department>
 
-<!-- Instructor (UPDATED TO OLEKSIY) -->
+<!-- Instructor -->
 <univ:Instructor rdf:about="#Dr_Oleksiy">
     <univ:hasName>Dr. Oleksiy</univ:hasName>
     <univ:hasEmail>oleksiy.khoma@university.fi</univ:hasEmail>
     <univ:hasUniversityId>INS2001</univ:hasUniversityId>
 </univ:Instructor>
 
-<!-- Second instructor kept for realism -->
 <univ:Instructor rdf:about="#Dr_Sari_Laaksonen">
     <univ:hasName>Dr. Sari Laaksonen</univ:hasName>
     <univ:hasEmail>sari.laaksonen@university.fi</univ:hasEmail>
@@ -37,13 +40,13 @@
     <univ:hasUniversityId>TA2001</univ:hasUniversityId>
 </univ:TeachingAssistant>
 
-<!-- ROOM (UPDATED TO AgC231.1) -->
+<!-- Room -->
 <univ:Room rdf:about="#AgC231_1">
     <univ:hasName>AgC231.1</univ:hasName>
     <univ:hasCapacity rdf:datatype="http://www.w3.org/2001/XMLSchema#int">40</univ:hasCapacity>
 </univ:Room>
 
-<!-- Courses with realistic data -->
+<!-- Courses -->
 <univ:LectureCourse rdf:about="#TIES4520">
     <univ:hasName>Semantic Technologies for Developers</univ:hasName>
     <univ:hasCredits rdf:datatype="http://www.w3.org/2001/XMLSchema#int">7</univ:hasCredits>
@@ -53,6 +56,10 @@
     <univ:teaches rdf:resource="#Dr_Oleksiy"/>
     <univ:hasTA rdf:resource="#TA_Ville_Niemi"/>
     <univ:heldIn rdf:resource="#AgC231_1"/>
+
+    <!-- RULE 1 inferred members -->
+    <univ:hasMember rdf:resource="#Hassan_Mehdi"/>
+    <univ:hasMember rdf:resource="#Eero_Virtanen"/>
 </univ:LectureCourse>
 
 <univ:ProjectCourse rdf:about="#TIES4570">
@@ -63,6 +70,10 @@
     <univ:offeredBy rdf:resource="#Dept_IT"/>
     <univ:teaches rdf:resource="#Dr_Sari_Laaksonen"/>
     <univ:heldIn rdf:resource="#AgC231_1"/>
+
+    <!-- RULE 1 inferred members -->
+    <univ:hasMember rdf:resource="#Hassan_Mehdi"/>
+    <univ:hasMember rdf:resource="#Mikael_Makinen"/>
 </univ:ProjectCourse>
 
 <univ:LectureCourse rdf:about="#TIES481">
@@ -73,6 +84,9 @@
     <univ:offeredBy rdf:resource="#Dept_IT"/>
     <univ:teaches rdf:resource="#Dr_Oleksiy"/>
     <univ:heldIn rdf:resource="#AgC231_1"/>
+
+    <!-- RULE 1 inferred members -->
+    <univ:hasMember rdf:resource="#Aino_Korhonen"/>
 </univ:LectureCourse>
 
 <!-- Students -->

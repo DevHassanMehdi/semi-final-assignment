@@ -1,0 +1,80 @@
+@prefix univ: <https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl#> .
+@prefix ind: <https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/individuals.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+############################################################
+# Rule 1: If a student is enrolled in a course,
+#         then the course has that student as a member.
+############################################################
+{
+    ?student rdf:type univ:Student .
+    ?student univ:enrolledIn ?course .
+}
+=>
+{
+    ?course univ:hasMember ?student .
+} .
+
+
+############################################################
+# Rule 2: If an instructor teaches a course, and the course 
+#         is offered by a department, the instructor is a 
+#         member of that department.
+############################################################
+{
+    ?instructor rdf:type univ:Instructor .
+    ?instructor univ:teaches ?course .
+    ?course univ:offeredBy ?dept .
+}
+=>
+{
+    ?dept univ:hasMember ?instructor .
+} .
+
+
+############################################################
+# Rule 3: If a student completed all prerequisites of a course, 
+#         then the student is eligible for that course.
+############################################################
+{
+    ?student rdf:type univ:Student .
+    ?course rdf:type univ:Course .
+    ?course univ:hasPrerequisite ?pr .
+    ?student ind:hasCompleted ?pr .
+}
+=>
+{
+    ?student univ:eligibleFor ?course .
+} .
+
+
+############################################################
+# Rule 4: If a course is held in more than one room, classify it 
+#         as a MultiRoomCourse (not inferable with OWL).
+############################################################
+{
+    ?course rdf:type univ:Course .
+    ?course univ:heldIn ?room1 .
+    ?course univ:heldIn ?room2 .
+    FILTER(?room1 != ?room2)
+}
+=>
+{
+    ?course rdf:type univ:MultiRoomCourse .
+} .
+
+
+############################################################
+# Rule 5: If a student has GPA > 4.0, classify them as 
+#         an HonorStudent (numeric comparison not possible in OWL).
+############################################################
+{
+    ?student rdf:type univ:Student .
+    ?student univ:hasGPA ?g .
+    FILTER(?g > 4.0)
+}
+=>
+{
+    ?student rdf:type univ:HonorStudent .
+} .
