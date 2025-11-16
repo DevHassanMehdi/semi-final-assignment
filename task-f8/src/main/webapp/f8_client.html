@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task F8 - Jena Reasoning SPARQL Endpoint</title>
+</head>
+<body>
+<h2>SPARQL + Reasoning Endpoint (Task F8)</h2>
+
+<form method="post" action="jena">
+    <p>
+        XHTML+RDFa URL:<br>
+        <input type="text" name="rdfaUrl" size="80"
+               value="http://localhost:8080/JenaReasoningEndpoint/f6_rdfa.html">
+    </p>
+
+    <p>
+        Jena Rules:<br>
+        <textarea name="rules" rows="10" cols="80"></textarea>
+    </p>
+
+    <p>
+        SPARQL Query:<br>
+        <textarea name="query" rows="10" cols="80"></textarea>
+    </p>
+
+    <p><button type="submit">Run Query</button></p>
+</form>
+
+</body>
+</html>

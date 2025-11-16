@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <display-name>TIES4520 RDF4J SPARQL Endpoint (Task F7)</display-name>
+
+    <servlet>
+        <servlet-name>Rdf4jSparqlEndpoint</servlet-name>
+        <servlet-class>fi.jyu.ties4520.f7.Rdf4jSparqlEndpoint</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Rdf4jSparqlEndpoint</servlet-name>
+        <!-- This path must match the action in f7_client.html -->
+        <url-pattern>/rdf4j-endpoint</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>f7_client.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>
