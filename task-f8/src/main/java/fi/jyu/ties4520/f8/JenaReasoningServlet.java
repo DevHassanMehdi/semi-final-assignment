@@ -111,9 +111,14 @@ public class JenaReasoningServlet extends HttpServlet {
 
             Model baseModel = ModelFactory.createDefaultModel();
 
-            // The second argument is the "language" name; with java-rdfa
-            // we can use "XHTML" for XML/XHTML-style content (Task specifies XHTML)
-            baseModel.read(rdfaUrl, "XHTML");
+            // Register java-rdfa classic readers
+            baseModel.setReaderClassName("XHTML", "net.rootdev.javardfa.jena.RDFaReader");
+            baseModel.setReaderClassName("HTML",  "net.rootdev.javardfa.jena.RDFaReader");
+            
+            // Force use of the java-rdfa reader (bypass RIOT)
+            RDFReader reader = baseModel.getReader("XHTML");
+            reader.read(baseModel, rdfaUrl);
+            
 
             out.println("<p>Parsed RDFa; base model has "
                     + baseModel.size() + " triples.</p>");
