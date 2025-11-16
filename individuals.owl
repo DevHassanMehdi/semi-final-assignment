@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/individuals.owl#"
+     xml:base="https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/individuals.owl"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:univ="https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl#">
+
+<owl:Ontology rdf:about="https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/individuals.owl">
+    <owl:imports rdf:resource="https://raw.githubusercontent.com/DevHassanMehdi/semi-final-assignment/refs/heads/main/ontology.owl"/>
+</owl:Ontology>
+
+<!-- Department -->
+<univ:Department rdf:about="#Dept_IT">
+    <univ:hasName>Department of Computing</univ:hasName>
+</univ:Department>
+
+<!-- Instructor (UPDATED TO OLEKSIY) -->
+<univ:Instructor rdf:about="#Dr_Oleksiy">
+    <univ:hasName>Dr. Oleksiy</univ:hasName>
+    <univ:hasEmail>oleksiy.khoma@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>INS2001</univ:hasUniversityId>
+</univ:Instructor>
+
+<!-- Second instructor kept for realism -->
+<univ:Instructor rdf:about="#Dr_Sari_Laaksonen">
+    <univ:hasName>Dr. Sari Laaksonen</univ:hasName>
+    <univ:hasEmail>sari.laaksonen@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>INS1002</univ:hasUniversityId>
+</univ:Instructor>
+
+<!-- Teaching Assistant -->
+<univ:TeachingAssistant rdf:about="#TA_Ville_Niemi">
+    <univ:hasName>Ville Niemi</univ:hasName>
+    <univ:hasEmail>ville.niemi@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>TA2001</univ:hasUniversityId>
+</univ:TeachingAssistant>
+
+<!-- ROOM (UPDATED TO AgC231.1) -->
+<univ:Room rdf:about="#AgC231_1">
+    <univ:hasName>AgC231.1</univ:hasName>
+    <univ:hasCapacity rdf:datatype="http://www.w3.org/2001/XMLSchema#int">40</univ:hasCapacity>
+</univ:Room>
+
+<!-- Courses with realistic data -->
+<univ:LectureCourse rdf:about="#TIES4520">
+    <univ:hasName>Semantic Technologies for Developers</univ:hasName>
+    <univ:hasCredits rdf:datatype="http://www.w3.org/2001/XMLSchema#int">7</univ:hasCredits>
+    <univ:hasStartDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-09-15</univ:hasStartDate>
+    <univ:hasEndDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-12-19</univ:hasEndDate>
+    <univ:offeredBy rdf:resource="#Dept_IT"/>
+    <univ:teaches rdf:resource="#Dr_Oleksiy"/>
+    <univ:hasTA rdf:resource="#TA_Ville_Niemi"/>
+    <univ:heldIn rdf:resource="#AgC231_1"/>
+</univ:LectureCourse>
+
+<univ:ProjectCourse rdf:about="#TIES4570">
+    <univ:hasName>Cognitive Service Development Project</univ:hasName>
+    <univ:hasCredits rdf:datatype="http://www.w3.org/2001/XMLSchema#int">15</univ:hasCredits>
+    <univ:hasStartDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-09-04</univ:hasStartDate>
+    <univ:hasEndDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-15</univ:hasEndDate>
+    <univ:offeredBy rdf:resource="#Dept_IT"/>
+    <univ:teaches rdf:resource="#Dr_Sari_Laaksonen"/>
+    <univ:heldIn rdf:resource="#AgC231_1"/>
+</univ:ProjectCourse>
+
+<univ:LectureCourse rdf:about="#TIES481">
+    <univ:hasName>Simulation</univ:hasName>
+    <univ:hasCredits rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</univ:hasCredits>
+    <univ:hasStartDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-10-28</univ:hasStartDate>
+    <univ:hasEndDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-18</univ:hasEndDate>
+    <univ:offeredBy rdf:resource="#Dept_IT"/>
+    <univ:teaches rdf:resource="#Dr_Oleksiy"/>
+    <univ:heldIn rdf:resource="#AgC231_1"/>
+</univ:LectureCourse>
+
+<!-- Students -->
+<univ:GraduateStudent rdf:about="#Hassan_Mehdi">
+    <univ:hasName>Hassan Mehdi</univ:hasName>
+    <univ:hasEmail>hassan@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>STU9001</univ:hasUniversityId>
+    <univ:enrolledIn rdf:resource="#TIES4520"/>
+    <univ:enrolledIn rdf:resource="#TIES4570"/>
+    <univ:hasAdvisor rdf:resource="#Dr_Oleksiy"/>
+    <univ:hasGPA rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.8</univ:hasGPA>
+    <univ:hasEnrollmentYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2025</univ:hasEnrollmentYear>
+</univ:GraduateStudent>
+
+<univ:UndergraduateStudent rdf:about="#Eero_Virtanen">
+    <univ:hasName>Eero Virtanen</univ:hasName>
+    <univ:hasEmail>eero.virtanen@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>STU9002</univ:hasUniversityId>
+    <univ:enrolledIn rdf:resource="#TIES4520"/>
+    <univ:hasAdvisor rdf:resource="#Dr_Oleksiy"/>
+    <univ:hasGPA rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.4</univ:hasGPA>
+    <univ:hasEnrollmentYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2024</univ:hasEnrollmentYear>
+</univ:UndergraduateStudent>
+
+<univ:UndergraduateStudent rdf:about="#Aino_Korhonen">
+    <univ:hasName>Aino Korhonen</univ:hasName>
+    <univ:hasEmail>aino.korhonen@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>STU9003</univ:hasUniversityId>
+    <univ:enrolledIn rdf:resource="#TIES481"/>
+    <univ:hasAdvisor rdf:resource="#Dr_Sari_Laaksonen"/>
+    <univ:hasGPA rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.6</univ:hasGPA>
+    <univ:hasEnrollmentYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2023</univ:hasEnrollmentYear>
+</univ:UndergraduateStudent>
+
+<univ:GraduateStudent rdf:about="#Mikael_Makinen">
+    <univ:hasName>Mikael Mäkinen</univ:hasName>
+    <univ:hasEmail>mikael.makinen@university.fi</univ:hasEmail>
+    <univ:hasUniversityId>STU9004</univ:hasUniversityId>
+    <univ:enrolledIn rdf:resource="#TIES4570"/>
+    <univ:hasAdvisor rdf:resource="#Dr_Sari_Laaksonen"/>
+    <univ:hasGPA rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.9</univ:hasGPA>
+    <univ:hasEnrollmentYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2022</univ:hasEnrollmentYear>
+</univ:GraduateStudent>
+
+</rdf:RDF>
